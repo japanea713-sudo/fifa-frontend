@@ -18,10 +18,10 @@ export default function Home() {
   }, []);
 
   if (loading) return (
-  <div className="skeleton-grid">
-    {Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton-card" />)}
-  </div>
-);
+    <div className="skeleton-grid">
+      {Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton-card" />)}
+    </div>
+  );
   if (error) return <p className="error-text">Error: {error}</p>;
 
   return (
@@ -36,19 +36,19 @@ export default function Home() {
       <div className="player-grid">
         {players.map((p, i) => (
           <Link
-            to={`/players/${p.sofifa_id}`}
-            key={p.sofifa_id}
+            to={`/players/${p.player_id}`}
+            key={p.player_id}
             className="player-card"
             style={{ animationDelay: `${i * 60}ms` }}
           >
-            <span className="score-badge">{p.overall}</span>
-         <img
-  src={p.player_face_url}
-  alt={p.short_name}
-  referrerPolicy="no-referrer"
-  onError={(e) => { e.target.onerror = null; e.target.src = fallbackAvatar(p.short_name); }}
-/>
-            <h3>{p.short_name}</h3>
+            <span className="score-badge">{p.overall_rating}</span>
+            <img
+              src={p.image}
+              alt={p.name}
+              referrerPolicy="no-referrer"
+              onError={(e) => { e.target.onerror = null; e.target.src = fallbackAvatar(p.name); }}
+            />
+            <h3>{p.name}</h3>
             <p>{p.club_name}</p>
           </Link>
         ))}
