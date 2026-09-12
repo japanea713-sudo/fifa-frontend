@@ -13,27 +13,19 @@ export default function TeamBuilder() {
 
   const addPlayer = (p) => {
     if (squad.length >= 11) return;
-    if (squad.find((s) => s.sofifa_id === p.sofifa_id)) return;
+    if (squad.find((s) => s.player_id === p.player_id)) return;
     setSquad([...squad, p]);
   };
 
-  const removePlayer = (id) => setSquad(squad.filter((s) => s.sofifa_id !== id));
+  const removePlayer = (id) => setSquad(squad.filter((s) => s.player_id !== id));
 
   const filtered = pool
-    .filter((p) => p.short_name?.toLowerCase().includes(search.toLowerCase()))
+    .filter((p) => p.name?.toLowerCase().includes(search.toLowerCase()))
     .slice(0, 20);
 
   const avgOverall = squad.length
-    ? Math.round(squad.reduce((sum, p) => sum + p.overall, 0) / squad.length)
+    ? Math.round(squad.reduce((sum, p) => sum + p.overall_rating, 0) / squad.length)
     : 0;
-  const totalValue = squad.reduce((sum, p) => sum + (p.value_eur || 0), 0);
-  const totalWage = squad.reduce((sum, p) => sum + (p.wage_eur || 0), 0);
-
-  const formatMoney = (n) => {
-    if (n >= 1_000_000) return `€${(n / 1_000_000).toFixed(1)}M`;
-    if (n >= 1_000) return `€${(n / 1_000).toFixed(0)}K`;
-    return `€${n}`;
-  };
 
   if (loading) return <p>Loading player pool...</p>;
 
@@ -51,14 +43,6 @@ export default function TeamBuilder() {
           <div className="label">Average overall</div>
           <div className="value">{avgOverall || "-"}</div>
         </div>
-        <div className="summary-stat">
-          <div className="label">Total value</div>
-          <div className="value">{formatMoney(totalValue)}</div>
-        </div>
-        <div className="summary-stat">
-          <div className="label">Total wage</div>
-          <div className="value">{formatMoney(totalWage)}/wk</div>
-        </div>
       </div>
 
       <div className="form-section">
@@ -68,12 +52,12 @@ export default function TeamBuilder() {
         ) : (
           <div className="player-grid">
             {squad.map((p) => (
-              <div key={p.sofifa_id} className="player-card squad-card">
-                <span className="score-badge">{p.overall}</span>
-                <img src={p.player_face_url} alt={p.short_name} referrerPolicy="no-referrer" />
-                <h3>{p.short_name}</h3>
+              <div key={p.player_id} className="player-card squad-card">
+                <span className="score-badge">{p.overall_rating}</span>
+                <img src={p.image} alt={p.name} referrerPolicy="no-referrer" />
+                <h3>{p.name}</h3>
                 <p>{p.club_name}</p>
-                <button className="remove-btn" onClick={() => removePlayer(p.sofifa_id)}>Remove</button>
+                <button className="remove-btn" onClick={() => removePlayer(p.player_id)}>Remove</button>
               </div>
             ))}
           </div>
@@ -101,10 +85,10 @@ export default function TeamBuilder() {
           </thead>
           <tbody>
             {filtered.map((p, i) => (
-              <tr key={p.sofifa_id} style={{ animationDelay: `${i * 30}ms` }}>
-                <td>{p.short_name}</td>
+              <tr key={p.player_id} style={{ animationDelay: `${i * 30}ms` }}>
+                <td>{p.name}</td>
                 <td>{p.club_name}</td>
-                <td>{p.overall}</td>
+                <td>{p.overall_rating}</td>
                 <td>
                   <button onClick={() => addPlayer(p)} disabled={squad.length >= 11}>
                     Add
